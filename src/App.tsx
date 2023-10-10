@@ -169,7 +169,6 @@ function Container({ block, blockIndex, setBlocks }:IWrappers) {
   );
 }
 function BlockWrapper({ block, blockIndex, setBlocks }:IWrappers) {
-  // console.log(block);
   if (!block) return null;
     return (
       <StyledBlockWrapper className="block" style={{color:'black'}} >
