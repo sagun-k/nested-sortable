@@ -1,0 +1,25 @@
+.wrapper {
+    position: relative;
+    background: white;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    cursor: move;
+  }
+  
+  .ghost {
+    background: lightblue !important;
+  }
+  
+  .fullPage{
+    background: white;
+    height: 100vh;
+  }
+
+ .container{
+    width: 80%;
+    margin-left: 10px;
+    padding: 10px;
+    
+ }

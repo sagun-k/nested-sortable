@@ -1,183 +1,88 @@
 import React, { useState } from "react";
-import { ReactSortable } from "react-sortablejs";
-import styled from "styled-components";
 import "./App.css";
+import GroupTree from "./GroupTree/GroupTree";
 
-const StyledBlockWrapper = styled.div`
-  position: relative;
-  background: white;
-  padding: 20px;
-  margin-bottom: 10px;
-  border: 1px solid lightgray;
-  border-radius: 4px;
-  cursor: move;
-  &:hover {
-    //background: #eeeeee;
-  }
-`;
 
-const sortableOptions = {
-  animation: 150,
-  fallbackOnBody: true,
-  swapThreshold: 0.65,
-  ghostClass: "ghost",
-  group: "shared"
+
+
+export type BankDetail = {
+  id:number,
+  bank_name: string;
+  branch_name?: string;
+  location?: string;
+  address?: string;
+  country?: string;
+  child?:BankDetail[]
+  isRoot?:boolean;
 };
 
-export interface IBlock{
-  id: number,
-  content: string;
-  width?: number;
-  type: string;
-  parent_id: number | null;
-  children: IBlock[]
-}
 
-export interface IWrappers{
-  block:IBlock;
-  setBlocks: React.Dispatch<React.SetStateAction<IBlock[]>>
-  blockIndex:number[]
-}
+
+const bankLists: BankDetail[] = [
+  {
+    id: 1,
+    bank_name: "Julius Baer Group",
+    branch_name: "Main Branch",
+    location: "Zurich",
+    address: "123 Lake Street",
+    country: "Switzerland",
+    child: [],
+  },
+  {
+    id: 2,
+    bank_name: "Vontobel",
+    branch_name: "Downtown Branch",
+    location: "Geneva",
+    address: "456 Alpine Avenue",
+    country: "Switzerland",
+    child: [],
+  },
+  {
+    id: 3,
+    bank_name: "Pictet Group",
+    branch_name: "Central Branch",
+    location: "Lucerne",
+    address: "789 Swiss Road",
+    country: "Switzerland",
+    child: [
+      {
+        id: 4,
+        bank_name: "Lombard Odier",
+        branch_name: "Westside Branch",
+        location: "Lausanne",   
+        address: "101 Mountain Lane",
+        country: "Switzerland",
+        child: [],
+      },
+      {
+        id: 5,
+        bank_name: "J. Safra Sarasin",
+        branch_name: "East End Branch",
+        location: "Bern",
+        address: "222 Valley Street",
+        country: "Switzerland",
+        child: [],
+      },
+    ], 
+  },
+ 
+]
+
+
 
 export default function App() {
-  const [blocks, setBlocks] = useState<IBlock[]>([
+  const [bankDetails, setBankDetails] = useState<BankDetail[]>([
     {
-      id: 1,
-      content: "item 1",
-      parent_id: null,
-      type: "container",
-      children: [
-        {
-          id: 2,
-          content: "item 2",
-          width: 3,
-          type: "container",
-          parent_id: 1,
-          children: []
-        },
-        {
-          id: 3,
-          content: "item 3",
-          width: 3,
-          type: "container",
-          parent_id: 1,
-          children: []
-        }
-      ]
-    },
-    {
-      id: 4,
-      content: "item 2",
-      parent_id: null,
-      type: "container",
-      children: [
-        {
-          id: 5,
-          content: "item 5",
-          width: 3,
-          parent_id: 2,
-          type: "container",
-          children: [
-            {
-              id: 8,
-              content: "item 8",
-              width: 6,
-              type: "container",
-              parent_id: 5,
-              children: []
-            },
-            {
-              id: 9,
-              content: "item 9",
-              width: 6,
-              type: "container",
-              parent_id: 5,
-              children: []
-            }
-          ]
-        },
-        {
-          id: 6,
-          content: "item 6",
-          width: 2,
-          type: "container",
-          parent_id: 2,
-          children: []
-        },
-        {
-          id: 7,
-          content: "item 7",
-          width: 2,
-          type: "container",
-          parent_id: 2,
-          children: []
-        }
-      ]
+      id:0,
+      bank_name:'Root',
+      child:bankLists,
+      isRoot:true
     }
   ]);
 
   return (
     <div>
-      <ReactSortable list={blocks} setList={setBlocks} {...sortableOptions}>
-        {blocks.map((block, blockIndex) => (
-          <BlockWrapper
-            key={block.id}
-            block={block}
-            blockIndex={[blockIndex]}
-            setBlocks={setBlocks}
-          />
-        ))}
-      </ReactSortable>
-      <button onClick={()=>{console.log(blocks)}} >Save herarchy</button>
+      <GroupTree banks={bankDetails} onChange={setBankDetails} />
     </div>
   );
-}
-function Container({ block, blockIndex, setBlocks }:IWrappers) {
-  return (
-    <>
-      <ReactSortable
-        key={block.id}
-        list={block.children || []}
-        setList={(currentList:IBlock[]) => {
-          setBlocks((sourceList) => {
-            const tempList = [...sourceList];
-            const _blockIndex = [...blockIndex];
-            const lastIndex = _blockIndex.pop();
-            const lastArr = _blockIndex.reduce(
-              (arr, i) => arr[i]["children"],
-              tempList
-            );
-            lastArr[lastIndex as number]["children"] = currentList;
-            return tempList;
-          });
-        }}
-        {...sortableOptions}
-      >
-        {block.children &&
-          block.children.map((childBlock, index) => {
-            return (
-              <BlockWrapper
-                key={childBlock.id}
-                block={childBlock}
-                blockIndex={[...blockIndex, index]}
-                setBlocks={setBlocks}
-              />
-            );
-          })}
-      </ReactSortable>
-    </>
-  );
-}
-function BlockWrapper({ block, blockIndex, setBlocks }:IWrappers) {
-  if (!block) return null;
-    return (
-      <StyledBlockWrapper className="block" style={{color:'black'}} >
-        container: {block.content}
-        <Container
-          block={block}
-          setBlocks={setBlocks}
-          blockIndex={blockIndex}
-        />
-      </StyledBlockWrapper>
-    );
 }
