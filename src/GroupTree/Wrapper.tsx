@@ -13,10 +13,10 @@ interface WrapperProps {
 
 const Wrapper = (props: WrapperProps) => {
   return (
+    <>
     <div
-      className={
-         "block wrapper"
-      }
+      className=
+         {`${props.bankIndexes.length <=1?'':'block wrapper container'}`}
     >
       {props.bankIndexes.length <=1 ? (
         <div style={{color:'black'}} >List of banks</div>
@@ -32,6 +32,7 @@ const Wrapper = (props: WrapperProps) => {
         {...props}
       />
     </div>
+    </>
   );
 };
 
